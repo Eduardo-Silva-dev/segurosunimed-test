@@ -1,6 +1,5 @@
 package com.example.api.service;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +9,9 @@ import com.example.api.web.dto.CustomerRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.example.api.domain.Customer;
@@ -37,6 +39,10 @@ public class CustomerService {
 
 	public Page<Customer> findByFilter(String name, String email, String gender, Pageable pageable) {
 		return repository.findByCriteriaAndOrderByName(name,email, gender, pageable);
+	}
+
+	public Optional<Customer> findCustomerByEmail(String email){
+		return repository.findCustomerByEmail(email);
 	}
 
 	@Transactional
@@ -73,5 +79,14 @@ public class CustomerService {
 		repository.deleteById(customer.getId());
 	}
 
+	public Customer authenticated() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof User) {
+			return findCustomerByEmail(((User) auth.getPrincipal()).getUsername()).get();
+		}
+
+		return null;
+	}
 
 }

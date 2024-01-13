@@ -22,7 +22,7 @@ public class Customer {
 
 	@Email
 	@NotEmpty
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String email;
 
 	@NotEmpty

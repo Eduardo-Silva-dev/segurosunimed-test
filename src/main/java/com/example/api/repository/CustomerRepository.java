@@ -10,12 +10,14 @@ import com.example.api.domain.Customer;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
 	Page<Customer> findAllByOrderByNameAsc(Pageable pageable);
 
-	Customer findCustomerByEmail(String email);
+	Optional<Customer> findCustomerByEmail(String email);
 
 	@Query("SELECT c FROM Customer c WHERE " +
 			"(:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
